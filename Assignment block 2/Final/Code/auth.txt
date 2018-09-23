@@ -1,0 +1,8 @@
+# source(file = "UT\\EoS\ -\ Economics\ of\ Security\\TelnetScans\\auth.txt")
+
+# library(readr)
+# data <- read_csv("UT/EoS - Economics of Security/TelnetScans/telnetscan.csv")
+library(dplyr)
+
+auth <- dplyr::filter(data, grepl("*account|*Account",banner) | grepl("*Password|*password",banner)| grepl("*Username|*username",banner)| grepl("*Login|*login",banner))
+nauth <- nrow(auth) # 3961430
