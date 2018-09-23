@@ -1,0 +1,8 @@
+# source(file = "UT\\EoS\ -\ Economics\ of\ Security\\TelnetScans\\rejected.txt")
+
+# library(readr)
+# data <- read_csv("UT/EoS - Economics of Security/TelnetScans/telnetscan.csv")
+library(dplyr)
+
+rejected <- data[grep("The proxyserver heeft de verbinding van de externe gebruiker geblokkeerd|no more session|too many active sessions|only one telnet session supported|exceeding max cli sessions|maximum reverse session limit reached|Over maximum cli session|Another telnet session is in progress|another console session is open|No more simmultaneous sessions allowed|connection closed by remote host|closing|lockout|not allow|exceed|sorry|reject|refuse|busy|invalid|failed|denied|error|unauthorized \\.", data$banner, ignore.case = TRUE),]
+nrejected <- nrow(rejected) # 454195
