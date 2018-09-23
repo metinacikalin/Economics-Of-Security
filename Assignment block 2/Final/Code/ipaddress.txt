@@ -1,0 +1,8 @@
+# source(file = "UT\\EoS\ -\ Economics\ of\ Security\\TelnetScans\\ipaddress.txt")
+
+# library(readr)
+# data <- read_csv("UT/EoS - Economics of Security/TelnetScans/telnetscan.csv")
+library(dplyr)
+
+ipaddress <- dplyr::filter(data, grepl("*[0-255].[0-255].[0-255].[0-255]",banner) & grepl("*connecting",banner))
+nipaddress <- nrow(ipaddress) # 54768
