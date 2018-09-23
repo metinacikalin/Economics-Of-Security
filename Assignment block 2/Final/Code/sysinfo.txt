@@ -1,0 +1,8 @@
+# source(file = "UT\\EoS\ -\ Economics\ of\ Security\\TelnetScans\\sysinfo.txt")
+
+# library(readr)
+# data <- read_csv("UT/EoS - Economics of Security/TelnetScans/telnetscan.csv")
+library(dplyr)
+
+sysinfo <- dplyr::filter(data, grepl("*OnCell|*Xrouter\\ v201b|*Santronics\\ Software|*Release|*Firmware\\ version|*DSL\\ Modem\\ Router|*Ubuntu|*Kernel|*FileZilla|*DATAWATT|*ZyXEL|*NPort|*Ethernet\\ Switch|*Catalyst\\ Switch|*Wireless\\ Switch|*telnet|*Grandstream|*Cisco|*Broadband\\ Router|*CentOS|*NewMedia|*HPro|*Telnet|*SVN|*SMTP|*NNRP|*LANCOM|*Linux|*FTP|*Debian|*OpenSSL|*glFTPd|*Welcome to an unconfigured NNTP server|*Red Hat Linux|*vsFTPd|*NBG5715|*QWi|*SSH|*Wandy|*MikroTik|*Debian GNU|*openpli",banner))
+nsysinfo <- nrow(sysinfo) # 881796
