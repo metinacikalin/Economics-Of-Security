@@ -1,0 +1,52 @@
+# library(readr)
+# telnetscan <- read_csv("telnetscan.csv")
+
+# session accessible grouped by NAICS
+countnaics <- as.data.frame(table(telnetscan$naics)) # count session by NAICS
+countnaics <- countnaics[order(-countnaics$Freq),] # order from the NAICS with the most session to the one with the lowest
+countnaics <- countnaics[-c(1), ] # remove NAICS written at 0
+othernaics <- 0
+j <- 1
+removenaics <- numeric()
+for (naics in countnaics$Var1){
+    if(countnaics$Freq[j]<10000){
+        othernaics <- othernaics + countnaics$Freq[j] # sum the NAICS with less than 10000 sessions accessed
+        removenaics <- append(removenaics,j) # retrieve which rows need to be removed
+    }
+    j <-j + 1
+}
+removenaics <- head (removenaics,-1)
+countnaicsreduced <- countnaics[-removenaics, ] # remove unecessary rows
+countnaicsreduced[length(countnaicsreduced$Var1),2]=othernaics # add remaining NAICS
+# based on the observed dataframe, the corresponding name were found on https://classcodes.com
+naicslabel <- c("Data Processing, Hosting, and Related Services", "Electronic Computer Manufacturing", "Telecommunications Resellers", "Computer Systems Design Services", "Internet Service Providers", "Others")
+# creation of the pie chart with percentage
+naicspct <- round(countnaicsreduced$Freq/sum(countnaicsreduced$Freq)*100)
+naicslbls <- paste(naicslabel, naicspct)
+naicslbls <- paste(naicslbls,"%",sep="")
+pie(countnaicsreduced$Freq,labels = naicslbls, col=rainbow(length(naicslbls)),main="Telnet sessions accessed, grouped by NAICS")
+
+# session accessible grouped by SIC
+# similar to NAICS
+# SIC labels were found on https://sc.bizdirlib.com
+countsic <- as.data.frame(table(telnetscan$sic))
+countsic <- countsic[order(-countsic$Freq),]
+countsic <- countsic[-c(1), ]
+othersic <- 0
+i <- 1
+removesic <- numeric()
+for (sic in countsic$Var1){
+    if(countsic$Freq[i]<10000){
+        othersic <- othersic + countsic$Freq[i]
+        removesic <- append(removesic,i)
+    }
+    i <-i + 1
+}
+removesic <- head (removesic,-1)
+countsicreduced <- countsic[-removesic, ]
+countsicreduced[length(countsicreduced$Var1),2]=othersic
+siclabel <- c("Internet Service", "Data Processing Service", "Computers-Electronic-Manufacturers", "Telecommunications Services", "Computer Related Services Nec", "Long Distance Telephone Service", "Others")
+sicpct <- round(countsicreduced$Freq/sum(countsicreduced$Freq)*100)
+siclbls <- paste(siclabel, sicpct)
+siclbls <- paste(siclbls,"%",sep="")
+pie(countsicreduced$Freq,labels = siclbls, col=rainbow(length(siclbls)),main="Telnet sessions accessed, grouped by SIC")
