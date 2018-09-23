@@ -1,0 +1,40 @@
+# source(file = "UT\\EoS\ -\ Economics\ of\ Security\\TelnetScans\\results.txt")
+
+# library(readr)
+library(dplyr)
+
+# data <- read_csv("UT/EoS - Economics of Security/TelnetScans/scan10000.csv")
+data <- read_csv("UT/EoS - Economics of Security/TelnetScans/telnetscan.csv")
+nall <- nrow(data) # 5102781
+
+# Metrics1
+auth <- dplyr::filter(data, grepl("*account|*Account",banner) | grepl("*Password|*password",banner)| grepl("*Username|*username",banner)| grepl("*Login|*login",banner))
+nauth <- nrow(auth) # 3961430
+
+# Metrics2
+rejected <- data[grep("The proxyserver heeft de verbinding van de externe gebruiker geblokkeerd|no more session|too many active sessions|only one telnet session supported|exceeding max cli sessions|maximum reverse session limit reached|Over maximum cli session|Another telnet session is in progress|another console session is open|No more simmultaneous sessions allowed|connection closed by remote host|closing|lockout|not allow|exceed|sorry|reject|refuse|busy|invalid|failed|denied|error|unauthorized \\.", data$banner, ignore.case = TRUE),]
+nrejected <- nrow(rejected) # 454195
+
+# Metrics6
+sysinfo <- dplyr::filter(data, grepl("*OnCell|*Xrouter\\ v201b|*Santronics\\ Software|*Release|*Firmware\\ version|*DSL\\ Modem\\ Router|*Ubuntu|*Kernel|*FileZilla|*DATAWATT|*ZyXEL|*NPort|*Ethernet\\ Switch|*Catalyst\\ Switch|*Wireless\\ Switch|*telnet|*Grandstream|*Cisco|*Broadband\\ Router|*CentOS|*NewMedia|*HPro|*Telnet|*SVN|*SMTP|*NNRP|*LANCOM|*Linux|*FTP|*Debian|*OpenSSL|*glFTPd|*Welcome to an unconfigured NNTP server|*Red Hat Linux|*vsFTPd|*NBG5715|*QWi|*SSH|*Wandy|*MikroTik|*Debian GNU|*openpli",banner))
+nsysinfo <- nrow(sysinfo) # 881796
+
+# Metrics7
+ipaddress <- dplyr::filter(data, grepl("*[0-255].[0-255].[0-255].[0-255]",banner) & grepl("*connecting",banner))
+nipaddress <- nrow(ipaddress) # 54768
+
+
+# Disable scientific notations
+options(scipen=5)
+
+# Plot the statistics
+stats <- barplot(matrix(c(nauth, (nall-nauth), nrejected, (nall-nrejected), nsysinfo, (nall-nsysinfo), nipaddress, (nall-nipaddress)), nr=2), beside=TRUE,
+            col=c("aquamarine3", "coral"),
+            names.arg=c("Require Login\nAuthentication","Disabled Login\nAuthentication", "Reject Telnet\nRequests", "Accept Telnet\nRequests", "Publish System\nInformation","Hide System\nInformation","Reveal Whitelisted\nIP Addresses","Hide Whitelisted\nIP Addresses"),
+            ylim=range(0,nall))
+
+# Add real values at every bar
+mar.default <- c(5,4,4,2) + 0.1
+# Customize (top) margin
+par(mar = mar.default + c(0, 0, 0, 4))
+text(x = stats, y = c(nauth, (nall-nauth), nrejected, (nall-nrejected), nsysinfo, (nall-nsysinfo), nipaddress, (nall-nipaddress)), labels = c(nauth, (nall-nauth), nrejected, (nall-nrejected), nsysinfo, (nall-nsysinfo), nipaddress, (nall-nipaddress)), pos = 3, cex = 2, col = "red")
