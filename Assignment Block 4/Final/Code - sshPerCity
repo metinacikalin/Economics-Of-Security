@@ -1,0 +1,29 @@
+library(readr)
+telnetscan <- read_csv("telnetscan.csv")
+sshpercity <- count(telnetscan, vars = c("ip","port","city", "banner"))
+sshpercity$freq <- NULL
+i <- 1
+for (n in sshpercity$banner){
+    if(!grepl("ssh",n,ignore.case=TRUE)){
+        sshpercity[i,5] = "telnet"
+    }
+    i <- i+1
+}
+i <- 1
+for (n in sshpercity$banner){
+    if(is.na(sshpercity[i,5])){
+        sshpercity[i,5] = "ssh"
+    }
+    i <- i+1
+}
+sshpercity2 <- count(sshpercity, vars = c("city", "V5"))
+sshpercity3 <- sshpercity2[sshpercity2$V5 == "telnet",]
+sshpercity4 <- sshpercity2[sshpercity2$V5 == "ssh",]
+colnames(sshpercity3) <- c("city", "","telnet")
+colnames(sshpercity4) <- c("city", "","ssh")
+colnames(sshpercity3) <- c("city", "a","telnet")
+colnames(sshpercity4) <- c("city", "a","ssh")
+sshpercity3$a <- NULL
+sshpercity4$a <- NULL
+library(dplyr)
+sshpercity2 <- full_join(sshpercity3,sshpercity4)
