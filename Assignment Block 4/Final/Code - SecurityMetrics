@@ -1,0 +1,113 @@
+# library(readr)
+# library(plyr)
+# telnetscan <- read_csv("telnetscan.csv")
+
+
+nbsessionbannerssh <- 0
+for (n in telnetscan$banner){
+      if(grepl("ssh",n,ignore.case=TRUE)){
+          nbsessionbannerssh  <- nbsessionbannerssh+1
+      }
+  }
+nbsessionbannerftp <- 0
+for (n in telnetscan$banner){
+      if(grepl("ftp",n,ignore.case=TRUE)){
+          nbsessionbannerftp  <- nbsessionbannerftp+1
+      }
+  }
+nbsessionbannerwarning <- 0
+for (n in telnetscan$banner){
+      if(grepl("authorized|authorised|restricted|privat|warning",n,ignore.case=TRUE)){
+          nbsessionbannerwarning  <- nbsessionbannerwarning+1
+      }
+  }
+nbsessionbannersmtp <- 0
+for (n in telnetscan$banner){
+      if(grepl("smtp",n,ignore.case=TRUE)){
+          nbsessionbannersmtp  <- nbsessionbannersmtp+1
+      }
+  }
+
+hostnamelist <- telnetscan$hostname
+hostnamelist$domainname <- str_match(hostnamelist$hostname, "[a-zA-Z0-9\\-]+\\.[a-zA-Z0-9]+$|^[a-zA-Z0-9\\-]+$|[a-zA-Z0-9\\-]+$")[,1]
+
+hostnamebannercount <- count(telnetscan, vars = c("hostname", "banner"))
+
+totalScanNb <- as.data.frame(table(telnetscan$hostname))
+
+i <- 1
+listhnnothing <- c()
+for (n in hostnamebannercount$banner){
+      if(!grepl("*OnCell|*Xrouter\\ v201b|*Santronics\\ Software|*Release|*Firmware\\ version|*DSL\\ Modem\\ Router|*Ubuntu|*Kernel|*FileZilla|*DATAWATT|*ZyXEL|*NPort|*Ethernet\\ Switch|*Catalyst\\ Switch|*Wireless\\ Switch|*telnet|*Grandstream|*Cisco|*Broadband\\ Router|*CentOS|*NewMedia|*HPro|*Telnet|*SVN|*SMTP|*NNRP|*LANCOM|*Linux|*FTP|*Debian|*OpenSSL|*glFTPd|*Welcome to an unconfigured NNTP server|*Red Hat Linux|*vsFTPd|*NBG5715|*QWi|*SSH|*Wandy|*MikroTik|*Debian GNU|*openpli|login|password|username|account|The proxyserver heeft de verbinding van de externe gebruiker geblokkeerd|no more session|too many active sessions|only one telnet session supported|exceeding max cli sessions|maximum reverse session limit reached|Over maximum cli session|Another telnet session is in progress|another console session is open|No more simmultaneous sessions allowed|connection closed by remote host|closing|lockout|not allow|exceed|sorry|reject|refuse|busy|invalid|failed|denied|error|unauthorized \\.|ssh|authorized|authorised|restricted|privat|warning",n,ignore.case=TRUE)){
+          listhnnothing <- c(listhnnothing, i)
+      }
+      i <- i+1
+  }
+i <- 1
+listhnperfect <- c()
+for (n in hostnamebannercount$banner){
+      if(grepl("login|password|username|account|The proxyserver heeft de verbinding van de externe gebruiker geblokkeerd|no more session|too many active sessions|only one telnet session supported|exceeding max cli sessions|maximum reverse session limit reached|Over maximum cli session|Another telnet session is in progress|another console session is open|No more simmultaneous sessions allowed|connection closed by remote host|closing|lockout|not allow|exceed|sorry|reject|refuse|busy|invalid|failed|denied|error|unauthorized \\.|ssh|authorized|authorised|restricted|privat|warning",n,ignore.case=TRUE) & !grepl("*OnCell|*Xrouter\\ v201b|*Santronics\\ Software|*Release|*Firmware\\ version|*DSL\\ Modem\\ Router|*Ubuntu|*Kernel|*FileZilla|*DATAWATT|*ZyXEL|*NPort|*Ethernet\\ Switch|*Catalyst\\ Switch|*Wireless\\ Switch|*telnet|*Grandstream|*Cisco|*Broadband\\ Router|*CentOS|*NewMedia|*HPro|*Telnet|*SVN|*SMTP|*NNRP|*LANCOM|*Linux|*FTP|*Debian|*OpenSSL|*glFTPd|*Welcome to an unconfigured NNTP server|*Red Hat Linux|*vsFTPd|*NBG5715|*QWi|*SSH|*Wandy|*MikroTik|*Debian GNU|*openpli",n,ignore.case=TRUE)){
+          listhnperfect <- c(listhnperfect, i)
+      }
+      i <- i+1
+  }
+i <- 1
+listhnreject <- c()
+for (n in hostnamebannercount$banner){
+      if(grepl("The proxyserver heeft de verbinding van de externe gebruiker geblokkeerd|no more session|too many active sessions|only one telnet session supported|exceeding max cli sessions|maximum reverse session limit reached|Over maximum cli session|Another telnet session is in progress|another console session is open|No more simmultaneous sessions allowed|connection closed by remote host|closing|lockout|not allow|exceed|sorry|reject|refuse|busy|invalid|failed|denied|error|unauthorized \\.",n,ignore.case=TRUE)){
+          listhnreject <- c(listhnreject, i)
+      }
+      i <- i+1
+  }
+
+i <- 1
+listhnsysinfo <- c()
+for (n in hostnamebannercount$banner){
+      if(grepl("*OnCell|*Xrouter\\ v201b|*Santronics\\ Software|*Release|*Firmware\\ version|*DSL\\ Modem\\ Router|*Ubuntu|*Kernel|*FileZilla|*DATAWATT|*ZyXEL|*NPort|*Ethernet\\ Switch|*Catalyst\\ Switch|*Wireless\\ Switch|*telnet|*Grandstream|*Cisco|*Broadband\\ Router|*CentOS|*NewMedia|*HPro|*Telnet|*SVN|*SMTP|*NNRP|*LANCOM|*Linux|*FTP|*Debian|*OpenSSL|*glFTPd|*Welcome to an unconfigured NNTP server|*Red Hat Linux|*vsFTPd|*NBG5715|*QWi|*SSH|*Wandy|*MikroTik|*Debian GNU|*openpli",n,ignore.case=TRUE)){
+          listhnsysinfo <- c(listhnsysinfo, i)
+      }
+      i <- i+1
+  }
+
+i <- 1
+for (n in hostnamebannercount$banner){
+      if(grepl("login|password|username|account",n,ignore.case=TRUE)){
+          listhnlogin <- c(listhnlogin, i)
+      }
+      i <- i+1
+  }
+  
+listhnwarning <- c()
+i <- 1
+for (n in hostnamebannercount$banner){
+      if(grepl("authorized|authorised|restricted|privat|warning",n,ignore.case=TRUE)){
+          listhnwarning <- c(listhnwarning, i)
+      }
+      i <- i+1
+  }
+ 
+listhnssh <- c()
+i <- 1
+for (n in hostnamebannercount$banner){
+     if(grepl("ssh",n,ignore.case=TRUE)){
+        listhnssh <- c(listhnssh, i)
+     }
+     i <- i+1
+ }
+
+nothinghn <- hostnamebannercount[listhnnothing,]
+perfecthn <- hostnamebannercount[listhnperfect,]
+sshhn <- hostnamebannercount[listhnssh,]
+warninghn <- hostnamebannercount[listhnwarning,]
+loginhn <- hostnamebannercount[listhnlogin,]
+sysinfohn <- hostnamebannercount[listhnsysinfo,]
+rejecthn <- hostnamebannercount[listhnreject,]
+
+nothinghn <- aggregate(nothinghn$freq, by=list(Category=nothinghn$hostname), FUN=sum)
+perfecthn <- aggregate(perfecthn$freq, by=list(Category=perfecthn$hostname), FUN=sum)
+sshhn <- aggregate(sshhn$freq, by=list(Category=sshhn$hostname), FUN=sum)
+warninghn <- aggregate(warninghn$freq, by=list(Category=warninghn$hostname), FUN=sum)
+loginhn <- aggregate(loginhn$freq, by=list(Category=loginhn$hostname), FUN=sum)
+sysinfohn <- aggregate(sysinfohn$freq, by=list(Category=sysinfohn$hostname), FUN=sum)
+rejecthn <- aggregate(rejecthn$freq, by=list(Category=rejecthn$hostname), FUN=sum)
+
