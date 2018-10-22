@@ -1,0 +1,108 @@
+library(readr)
+telnetscan <- read_csv("telnetscan.csv")
+hostnameindustry <- telnetscan
+hostnameindustry$timestamp <- NULL
+hostnameindustry$ip <- NULL
+hostnameindustry$protocol <- NULL
+hostnameindustry$port <- NULL
+hostnameindustry$tag <- NULL
+hostnameindustry$asn <- NULL
+hostnameindustry$geo <- NULL
+hostnameindustry$region <- NULL
+hostnameindustry$city <- NULL
+hostnameindustry$banner <- NULL
+View(hostnameindustry)
+hostnameindustry <- unique(hostnameindustry)
+sshperindustry <- telnetscan
+sshperindustry$timestamp <- NULL
+sshperindustry$protocol <- NULL
+sshperindustry$tag <- NULL
+sshperindustry$asn <- NULL
+sshperindustry$geo <- NULL
+sshperindustry$region <- NULL
+sshperindustry$city <- NULL
+sshperindustry$hostname <- NULL
+sshperindustry <- unique(sshperindustry)
+i <- 1
+for (n in sshperindustry$banner){
+     if(!grepl("ssh",n,ignore.case=TRUE)){
+         sshperindustry[i,5] = "telnet"
+     }
+     i <- i+1
+ }
+i <- 1
+for (n in sshperindustry$banner){
+     if(grepl("ssh",n,ignore.case=TRUE)){
+         sshperindustry[i,5] = "ssh"
+     }
+     i <- i+1
+ }
+sshperindustry <- unique(sshperindustry)
+library(plyr)
+sshperindustry2 <- count(sshperindustry, vars = c("naics", "sic", "banner"))
+View(sshperindustry2)
+write.csv(sshperindustry2, "sshperindustry.csv")
+i <- 1
+sshperindustry2[3,1] = "Crude Petroleum and Natural Gas Extraction"
+sshperindustry2[3,2] = "Crude Petroleum and Natural Gas"
+sshperindustry2[4,1] = "Breweries"
+sshperindustry2[5,1] = "Turbine and Turbine Generator Set Units Manufacturing"
+sshperindustry2[6,1] = "Electronic Computer Manufacturing"
+sshperindustry2[7,1] = "Electronic Computer Manufacturing"
+sshperindustry2[8,1] = "Radio and Television Broadcasting and Wireless Communications Equipment Manufacturing"
+sshperindustry2[9,1] = "Wired and wireless telecommunications carriers (except satellite)"
+sshperindustry2[10,1] = "Wired and wireless telecommunications carriers (except satellite)"
+sshperindustry2[11,1] = "Wired and wireless telecommunications carriers (except satellite)"
+sshperindustry2[12,1] = "Internet Service Providers"
+sshperindustry2[13,1] = "Internet Service Providers"
+sshperindustry2[14,1] = "Internet Service Providers"
+sshperindustry2[15,1] = "Internet Service Providers"
+sshperindustry2[16,1] = "Data Processing, Hosting, and Related Services"
+sshperindustry2[17,1] = "Data Processing, Hosting, and Related Services"
+sshperindustry2[18,1] = "Data Processing, Hosting, and Related Services"
+sshperindustry2[19,1] = "Data Processing, Hosting, and Related Services"
+sshperindustry2[20,1] = "Credit Card Issuing"
+sshperindustry2[21,1] = "Custom Computer Programming Services"
+sshperindustry2[22,1] = "Custom Computer Programming Services"
+sshperindustry2[23,1] = "Computer Systems Design Services"
+sshperindustry2[24,1] = "Computer Systems Design Services"
+sshperindustry2[25,1] = "Other Scientific and Technical Consulting Services"
+sshperindustry2[26,1] = "Research and development in the physical, engineering and life sciences"
+sshperindustry2[27,1] = "Research and development in the physical, engineering and life sciences"
+sshperindustry2[28,1] = "Direct Mail Advertising"
+sshperindustry2[29,1] = "Employment placement agencies and executive search services"
+sshperindustry2[30,1] = "Colleges, Universities, and Professional Schools"
+sshperindustry2[31,1] = "Colleges, Universities, and Professional Schools"
+sshperindustry2[32,1] = "All Other Personal Services"
+sshperindustry2[4,2] = "Brewery"
+sshperindustry2[5,2] = "Turbines-Manufacturers"
+sshperindustry2[6,2] = "Computers-Electronic-Manufacturers"
+sshperindustry2[7,2] = "Computers-Electronic-Manufacturers"
+sshperindustry2[8,2] = "Communication Equipment-Manufacturers"
+sshperindustry2[26,2] = "Space Research & Development"
+sshperindustry2[27,2] = "Space Research & Development"
+sshperindustry2[9,2] = "Telecommunications Services"
+sshperindustry2[10,2] = "Telecommunications Services"
+sshperindustry2[11,2] = "Long Distance Telephone Service"
+sshperindustry2[32,2] = "Communications"
+sshperindustry2[20,2] = "State Commercial Banks"
+sshperindustry2[22,2] = "Mailing & Shipping Services"
+sshperindustry2[22,2] = ""
+sshperindustry2[28,2] = "Mailing & Shipping Services"
+sshperindustry2[29,2] = "Employment Service-employee Leasing"
+sshperindustry2[21,2] = "Computer Services"
+sshperindustry2[12,2] = "Data Processing Service"
+sshperindustry2[13,2] = "Data Processing Service"
+sshperindustry2[16,2] = "Data Processing Service"
+sshperindustry2[17,2] = "Data Processing Service"
+sshperindustry2[14,2] = "Internet Service Business Directory"
+sshperindustry2[18,2] = "Internet Service Business Directory"
+sshperindustry2[19,2] = "Internet Service Business Directory"
+sshperindustry2[15,2] = "Computer Related Services Nec"
+sshperindustry2[23,2] = "Computer Related Services Nec"
+sshperindustry2[24,2] = "Computer Related Services Nec"
+sshperindustry2[30,2] = "Schools-universities & Colleges Academic"
+sshperindustry2[31,2] = "Schools-universities & Colleges Academic"
+sshperindustry2[25,2] = "Consultants-business Nec"
+sshperindustry2[22,2] = "Administrative Management and General Management Consulting Services"
+write.csv(sshperindustry2, "sshperindustrySicNaics.csv")
